@@ -18,7 +18,7 @@ async Task Main()
 	var config = new Config
 	{
 		Pat = Util.GetPassword("GitHub PAT"),
-		Repository = "michaelkc/Samples.Deployment",
+		Repository = "michaelkc/Samples.Deployment2",
 		ClientName = "michaelkc"
 	};
 
