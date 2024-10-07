@@ -13,6 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+        # A release name is restricted to fewer chars than the full sha requires. So we shorten it.
+      - name: Generate Release Version Number
+        run: echo "RELEASE_VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Build release
         run: |
           CONTAINER_VERSIONS="container1:v1.0.0 container2:v2.0.0" # Example container versions
@@ -38,6 +42,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          name: ${{ github.sha }}
+          tag_name: ${{ env.RELEASE_VERSION }}
+          name: ${{ env.RELEASE_VERSION }}
           files: manifest.json
