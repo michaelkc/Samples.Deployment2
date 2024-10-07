@@ -1,0 +1,30 @@
+name: CD
+on: deployment
+jobs:
+
+  CD:
+    env:
+      DEPLOY_ID: ${{ github.event.deployment.id }}
+      DEPLOY_TOKEN: ${{ github.token }}
+      DEPLOY_TARGET_ENV:  ${{ github.event.deployment.environment }}
+    runs-on: ubuntu-latest
+    permissions: 
+      deployments: write
+    steps:
+
+      - name: Simulate a deployment
+        run: |
+          echo "Doing a fake deployment of ref ${{ github.event.deployment.ref }} / sha ${{ github.event.deployment.sha }} to ${{ github.event.deployment.environment }}"
+          echo "TODO test"
+          echo "TODO build"
+          echo "TODO deploy"
+
+      - name: Deployment success
+        if: success()
+        run: |
+          curl -X POST -H "Authorization: token ${DEPLOY_TOKEN}" -H "Accept: application/vnd.github.flash-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/${GITHUB_REPOSITORY}/deployments/${DEPLOY_ID}/statuses --data '{"environment": "${{ github.event.deployment.environment }}", "state": "success"}'
+
+      - name: Deployment failure
+        if: failure()
+        run: |
+          curl -X POST -H "Authorization: token ${DEPLOY_TOKEN}" -H "Accept: application/vnd.github.flash-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/${GITHUB_REPOSITORY}/deployments/${DEPLOY_ID}/statuses --data '{"environment": "${{ github.event.deployment.environment }}", "state": "failure"}'

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build release
+        run: |
+          CONTAINER_VERSIONS="container1:v1.0.0 container2:v2.0.0" # Example container versions
+          echo "container_versions=$CONTAINER_VERSIONS" >> $GITHUB_ENV
+
+      - name: Generate release manifest
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          cat <<EOF > manifest.json
+          {
+            "release_version": "${{ env.RELEASE_VERSION }}",
+            "full_sha": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}",
+            "build_date": "$TIMESTAMP",
+            "run_number": "${{ github.run_number }}",
+            "container_versions": "${{ steps.fake_build.outputs.container_versions }}"
+          }
+          EOF
+
+      - name: Create and Publish GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.sha }}
+          name: ${{ github.sha }}
+          files: manifest.json
