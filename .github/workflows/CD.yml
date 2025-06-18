@@ -1,5 +1,5 @@
 name: CD
-on: deployment
+on: [deployment, workflow_dispatch]
 jobs:
 
   CD:
