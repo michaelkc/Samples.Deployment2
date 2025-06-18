@@ -23,3 +23,5 @@ Currently it does not handle things like
 - the slick logic Octopus uses to order and fade in/out releases not currently active but deployed earlier
 
 In a finalized setup, DeploymentCreator and DeploymentStatus would merge together in an Octopus-release-matrix-like application.
+
+----
